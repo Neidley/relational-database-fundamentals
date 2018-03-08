@@ -1,0 +1,96 @@
+1. Given the values table below, what data types do each of these values represent?
+
+  A Clockwork Orange - string
+  42 - integer
+  09/02/1945 - date
+  98.7 - float
+  15.99 - float
+
+2. Explain in your own words when a database might be used. Explain when a text file might be used.
+
+  A text file might be used when only one person at any time needs to have access to the data it holds.
+  A database is needed when multiple people may need to read or update the data simultaneously.
+
+3. Describe one difference between SQL and other programming languages.
+
+  SQL is declarative; you describe a result and the database decides how best to access and deliver the
+  requested data.
+  Other languages such as JavaScript and Ruby require the user to include methods instructing
+  how to iterate over the data to retrieve the desired result(s).
+
+4. In your own words, explain how the pieces of a database system fit together at a high level.
+
+  Databases allow varying data types to exist in two dimensions. For example, a database of a movie theater schedule
+  would need to have columns such as "Movie Title" and "Showtimes" but that only helps if you also
+  have rows to bind a movie to its correct showtimes.
+
+5. Explain the meaning of table, row, column, and value.
+
+  In relational databases, and flat file databases, a table is a set of data elements (values)
+  using a model of vertical columns (identifiable by name) and horizontal rows,
+  the cell being the unit where a row and column intersect.
+  A table has a specified number of columns, but can have any number of rows.
+  Each row is identified by one or more values appearing in a particular column subset.
+  A specific choice of columns which uniquely identify rows is called the primary key.
+
+6. List 3 data types that can be used in a table.
+
+  String
+  Integer
+  Float
+
+7. Given the payments table below, provide an English description and the results for the following queries:
+SELECT date, amount
+FROM payments;
+
+  ANSWER:
+  What is the date and amount of (all) payments?
+  RESULT:
+  date	amount
+  5/1/2016	1500.00
+  5/10/2016	37.00
+  5/15/2016	124.93
+  5/23/2016	54.72
+
+SELECT amount
+FROM payments
+WHERE amount > 500;
+
+  ANSWER:
+  What are the amounts from payments where amount is greater than 500?
+  RESULT:
+  amount
+  1500.00
+
+SELECT *
+FROM payments
+WHERE payee = "Mega Foods";
+
+  ANSWER:
+  What are date, payee, amount, and memo (all columns) of payments where the payee is "Mega Foods"?
+  RESULT:
+  date	payee	amount	memo
+  5/15/2016	Mega Foods	124.93	Groceries
+
+8. Given the users table below, write the following SQL queries and their results:
+
+Select the email and sign-up date for the user named DeAndre Data.
+
+  ANSWER:
+  SELECT email, signup
+  FROM users
+  WHERE name = 'DeAndre Data';
+
+Select the user ID for the user with email 'aleesia.algorithm@uw.edu'.
+
+  ANSWER:
+  SELECT id
+  FROM users
+  WHERE email = 'aleesia.algorithm@uw.edu';
+
+Select all the columns for the user ID equal to 4.
+
+  ANSWER:
+  SELECT *
+  FROM users
+  WHERE id = 4;
