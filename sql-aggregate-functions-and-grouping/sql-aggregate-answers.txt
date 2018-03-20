@@ -1,0 +1,268 @@
+1. List 5 aggregate functions and explain, in your own words, what they are for.
+Include a real world example for each. If you can’t list these from memory,
+do these flashcards until you can!
+
+  ANSWER HERE
+    a. WHERE <condition>
+    - used for: initially restricting results.
+    - example: I want a fruit farm to bring me only the number of oranges harvested today.
+
+    b. GROUP BY <column_name(s)>
+    - used for: organizing results into logical groups.
+    - example: I would like the oranges from today's harvest grouped according to ripeness.
+
+    c. HAVING <condition>
+    - used for: Used with GROUP BY. Allows SELECT expression to further eliminates groups of data.
+    - example: I would like to only know the number of rotten oranges harvested today.
+
+    d. ORDER BY <column_name(s)>
+    - used for: sorts results by column input, options for ascending or descending.
+    - example: I would like the names of all different fruits harvested today, ordered most to least harvested.
+
+    e. (LIMIT / OFFSET)
+    - used for: Limit allows a specified number of top results to be returned
+                Offset is used with limit to returns Y - X + Y, if Y is the offset
+    - example: I would like to limit results to just the top 3 most harvested fruits today.
+
+2. Given this donations table, write queries and include the output for the following:
+
+The total of all donations received in the past year.
+
+  ANSWER HERE
+  Query:
+    SELECT SUM(amount)
+    FROM donations;
+
+  Output:
+    sum
+    993
+
+
+The total donations over time per donor (e.g. if Tanysha has donated 3 times with the amounts
+$25, $30, and $50, then the result would be | Tanysha | 105 |).
+
+  ANSWER HERE
+  Query:
+    SELECT donor, SUM(amount)
+    FROM donations
+    GROUP BY donor
+    ORDER BY donor;
+
+  Output:
+    donor	sum
+    Arya	60
+    Bran	25
+    Brienne	75
+    Bronn	20
+    Daario	10
+    Daenerys	173
+    Gilly	7
+    Jon	25
+    Margaery	120
+    Melisandre	45
+    Missandei	90
+    Petyr	70
+    Samwell	20
+    Sansa	33
+    Theon	20
+    Tormund	50
+    Tyrion	120
+    Ygritte	30
+
+The average donation per donor.
+
+  ANSWER HERE
+  Query:
+    SELECT donor, AVG(amount)
+    FROM donations
+    GROUP BY donor
+    ORDER BY donor;
+
+  Output:
+    donor	avg
+    Arya	20
+    Bran	25
+    Brienne	75
+    Bronn	20
+    Daario	10
+    Daenerys	86.5
+    Gilly	7
+    Jon	25
+    Margaery	120
+    Melisandre	45
+    Missandei	22.5
+    Petyr	70
+    Samwell	20
+    Sansa	33
+    Theon	10
+    Tormund	50
+    Tyrion	40
+    Ygritte	30
+
+The number of donations over $100.
+
+  ANSWER HERE
+  Query:
+    SELECT COUNT(amount)
+    FROM donations
+    WHERE amount > 100;
+
+  Output:
+    count
+    2
+
+The largest donation received in a single instance from a single donor.
+
+  ANSWER HERE
+  Query:
+    SELECT MAX(amount)
+    FROM donations
+    LIMIT(1);
+
+  Output:
+    max
+    120
+
+The smallest donation received.
+
+  ANSWER HERE
+  Query:
+    SELECT MIN(amount)
+    FROM donations
+    LIMIT(1);
+
+  Output:
+    min
+    5
+
+3. How would you determine the display order of data returned by your SELECT statement?
+
+  ANSWER HERE
+    (use either ASC for ascending display order or DESC for descending display order)
+    ex:
+    SELECT column1, column2, ...
+    FROM table_name
+    ORDER BY column1, column2, ... ASC|DESC;
+
+4. What is a real world situation where you would use OFFSET?
+
+  ANSWER HERE
+    I have a table of cross country race final standings.
+    I want to only give medals to racers in the top 3 of the standings.
+
+5. Why is it important to use ORDER BY when limiting your results?
+
+  ANSWER HERE
+    When dealing with long lists of data without order it could take considerably more
+    time to otherwise visualize data amounts that fall within any need-to-know range.
+
+6. What is the difference between HAVING and WHERE?
+
+  ANSWER HERE
+    HAVING requires GROUP BY and eliminates by group conditionals.
+    WHERE restricts results according to a specified condition.
+
+7. Correct the following SELECT statement:
+SELECT id, SUM (amount)
+FROM payment
+HAVING SUM (amount) > 200;
+
+  ANSWER HERE
+    SELECT id, SUM(amount)
+    FROM payment
+    GROUP BY donor
+    HAVING SUM(amount) > 200;
+
+8. Follow the instructions for the scenarios below:
+Given this [cats][http://sqlfiddle.com/#!17/bc4d2] table from the previous checkpoint,
+list all cats organized by intake date.
+
+  ANSWER HERE
+  Query:
+    SELECT *
+    FROM cats
+    ORDER BY intake_date;
+
+  Output:
+    id	name	    gender  age	 intake_date	 adoption_date
+    1	  Mushi	    M	      1	   2016-01-09	   2016-03-22
+    2	  Seashell	F	      7	   2016-01-09	   (null)
+    3	  Azul	    M	      3	   2016-01-11	   2016-04-17
+    4	  Victoire	M	      7	   2016-01-11	   2016-09-01
+    5	  Nala	    F	      1	   2016-01-12	   (null)
+
+Given this adoptions table, determine the 5 most recent adoptions to be featured
+for a social media promotion called "Happy Tails" which lists recent successful adoptions.
+
+  ANSWER HERE
+  Query:
+    SELECT *
+    FROM adoptions
+    ORDER BY date
+    LIMIT 5 OFFSET 1;
+
+  Output:
+    id	   adopter	         cat	        date	       fee
+    10037	 Arabella Figg	   Tufty	      1988-05-03	 20
+    10040	 Arabella Figg	   Snowy	      1989-11-29	 35
+    10054	 Arabella Figg	   Mr. Tibbles	1990-02-18	 30
+    10055	 Arabella Figg	   Mr. Paws	    1990-02-18	 30
+    10093	 Hermione Granger	 Crookshanks	1993-08-31	 10
+
+There is a potential adopter looking for an adult female cat. In the most efficient
+way possible, list all female cats 2 or more years old from the cats table.
+
+  ANSWER HERE
+  Query:
+    SELECT name, gender, age
+    FROM cats
+    WHERE gender = 'F' AND age > 2;
+
+  Output:
+    name	    gender	age
+    Seashell	F	      7
+
+From the donations table (from problem #2), find the top 5 donors with the highest
+cumulative donation amounts to be honored as “Platinum Donors”.
+
+  ANSWER HERE
+  Query:
+    SELECT donor, SUM(amount)
+    FROM donations
+    GROUP BY donor
+    ORDER BY SUM(amount) DESC
+    LIMIT 5;
+
+  Output:
+    donor	sum
+    Daenerys	173
+    Margaery	120
+    Tyrion	120
+    Missandei	90
+    Brienne	75
+
+From the donations table (from problem #2), find donors 6-15 with the next highest
+cumulative donation amounts to be honored as “Gold Donors”.
+
+  ANSWER HERE
+  Query:
+    SELECT donor, SUM(amount)
+    FROM donations
+    GROUP BY donor
+    ORDER BY SUM(amount) DESC
+    OFFSET 5 LIMIT 10;
+
+  Output:
+    donor	sum
+    Petyr	70
+    Arya	60
+    Tormund	50
+    Melisandre	45
+    Sansa	33
+    Ygritte	30
+    Jon	25
+    Bran	25
+    Samwell	20
+    Theon	20
+
+end
