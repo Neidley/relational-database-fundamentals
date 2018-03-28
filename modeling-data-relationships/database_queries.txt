@@ -1,0 +1,88 @@
+1.
+
+  Find a guest who exists in the database and has not booked a room.
+
+    ANSWER HERE
+
+      SELECT guests.id, guests.name, bookings.id
+      FROM guests
+      FULL OUTER JOIN bookings ON bookings.guest_id = guests.id
+      WHERE guests.id NOT IN (SELECT bookings.guest_id FROM bookings);
+
+  Find bookings for a guest who has booked two rooms for the same dates.
+
+    ANSWER HERE
+
+      SELECT bookings.id, bookings.guest_id, bookings.room_number, bookings.check_in_date, bookings.check_out_date
+      FROM bookings
+      WHERE bookings.guest_id = '001'
+      GROUP BY bookings.id, bookings.guest_id, bookings.room_number, bookings.check_in_date, bookings.check_out_date
+      HAVING bookings.check_in_date = '2009-06-05';
+
+  Find  bookings for a guest who has booked one room several times on different dates.
+
+    ANSWER HERE
+
+      SELECT bookings.id, bookings.guest_id, bookings.check_in_date, bookings.room_number
+      FROM bookings
+      WHERE bookings.room_number = 409 AND bookings.guest_id = 001;
+
+  Count the number of unique guests who have booked the same room.
+
+    ANSWER HERE
+
+      SELECT COUNT(DISTINCT bookings.guest_id)
+      FROM bookings
+      WHERE bookings.room_number = 409;
+
+
+2.
+  Design a data model for students and the classes they have taken.
+  The model should include the students' grades for a given class.
+  Draw the model using the notation used in the checkpoint and submit a picture.
+
+  ANSWER HERE
+
+    https://imgur.com/oi3haNr
+
+
+3.
+
+  All students who have taken a particular class.
+
+    ANSWER HERE
+
+      SELECT subjects.student_id, students.name, subjects.id, subjects.name
+      FROM subjects
+      JOIN students ON students.id = subjects.student_id
+      WHERE subjects.name = 'Economics';
+
+  The number of each grade (using letter grades A-F) earned in a particular class.
+
+    ANSWER HERE
+
+      SELECT subjects.name, subjects.grade, COUNT(DISTINCT subjects.grade)
+      FROM subjects
+      GROUP BY subjects.grade, subjects.name
+      HAVING subjects.name = 'Economics';
+
+  Class names and the total number of students who have taken each class in the list.
+
+    ANSWER HERE
+      SELECT subjects.name, COUNT(DISTINCT subjects.student_id)
+      FROM subjects
+      GROUP BY subjects.name
+      ORDER BY COUNT(DISTINCT subjects.student_id) DESC;
+
+
+
+  The class taken by the largest number of students.
+
+    ANSWER HERE
+
+      SELECT subjects.name, COUNT(DISTINCT subjects.student_id)
+      FROM subjects
+      GROUP BY subjects.name
+      ORDER BY COUNT(DISTINCT subjects.student_id) DESC
+      LIMIT 1;
+end
