@@ -1,0 +1,38 @@
+CONCEPT	DESCRIPTION
+Normalization
+
+  process of designing or structuring data in order to reduce data redundancy and improve data integrity.
+  This involves organizing the columns (attributes) and tables (relations) in relational databases
+
+Denormalization
+
+  process performed on a previously-normalized database to increase read performance.
+  This happens at the expense of losing some write performance, by adding redundant
+  copies of data or by grouping data.
+
+Data integrity
+
+  a key benefit of normalization. A lack of redundant, neglected data in normalization
+  helps update anomalies (mistakes) and data inconsistencies
+
+1NF
+
+  first normal form: a column of a table cannot contain multiple values
+
+2NF
+
+  second normal form: the table must be in 1NF, and all non-key attributes cannot
+  be dependent on a subset of the primary key
+
+3NF
+
+  the table must be in 2NF, and all transitive functional dependencies of non-prime
+  attributes must not exist.
+
+Boyce Codd normal form (BCNF)
+
+  table must be in 3NF, as well as for every dependency X -> Y, X must be a super key of the table.
+
+super key
+
+  a set of attributes within a table whose values can be used to uniquely identify all other attributes

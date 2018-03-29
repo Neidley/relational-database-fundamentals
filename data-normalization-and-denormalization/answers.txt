@@ -1,0 +1,182 @@
+1. In your own words, explain the benefits of normalization.
+Include a real-world scenario where normalization is necessary.
+
+  ANSWER HERE
+
+    Normalization
+      a. helps make database storage more efficient.
+         This is achieved through emphasis of data integrity, or reducing data
+         redundancies.
+      b. allows faster index creation, sorting, and update performance.
+         This is due to fewer table columns, and fewer indexes per row per table.
+      c. reduces chances of data insertion errors.
+
+    Example:
+      Any very large database, such as a sporting goods retail chain.
+      Some tables may not need to accessed often,
+      but when necessary, data integrity must take precedence.
+      Data integrity is the lack of redundant, neglected data therefore reducing
+      both mistakes from entity(table) updates and data inconsistencies.
+
+
+2. List and explain the different normal forms and how they relate to one another,
+with regard to your real-world scenario in the first question.
+
+  ANSWER HERE
+
+    1NF
+      - One value per column per table maximum.
+
+      example: I want to see a stores employee work hour shift for a given week.
+               Each individual shift needs to be stored in its own indexes in the shift table
+
+    2NF
+      - Must be 1NF plus non-key columns must only be dependent on the keys in their table.
+
+      example: Assuming there's an employee table in our sporting goods database...
+               There should only exist one Non-key indexes per table unless the non-key is actually
+               dependent on multiple keys for accessibility.
+
+                 CREATE TABLE employee (
+                  id integer PRIMARY KEY NOT NULL,
+                  full_time_benefits boolean
+                 );
+
+                 CREATE TABLE employee (
+                  id integer PRIMARY KEY NOT NULL,
+                  vacation_hours integer
+                 );
+
+               full-time benefits has no direct influence on vacation_hours,
+               and vacation_hours have no direct influence on full_time_benefits.
+
+    3NF
+      - Must be 2NF plus tables only have one pair of key and non-key logical pair per table.
+
+      example:
+
+        Our previous example is also a perfect example of 3NF because each table
+        has only two columns; one primary key, and one non-primary key.
+
+        CREATE TABLE employee (
+          id integer PRIMARY KEY NOT NULL,
+          full_time_benefits boolean
+        );
+
+        CREATE TABLE employee (
+          id integer PRIMARY KEY NOT NULL,
+          vacation_hours integer
+        );
+
+    BCNF
+      - Must be 3NF plus every dependency X -> Y, X must be a super key of the table.
+        Super keys are a set of attributes within a table whose values can be used
+        to uniquely identify all other attributes.
+
+      example:
+
+        CREATE TABLE employee (
+          id integer PRIMARY KEY NOT NULL,
+          name text NOT NULL
+        );
+
+        CREATE TABLE department (
+          name text PRIMARY KEY NOT NULL,
+          planogrammed boolean,
+          ideal_staff_num integer
+        );
+
+        CREATE TABLE department_employee (
+          employee_id integer REFERENCES employee(id),
+          department_id integer REFERENCES department(id)
+        );
+
+        In this example, employee.id is a super key of the first table, and
+        identifies all the columns.
+        The department table, department.name follows the same for the second table.
+        In the third table, the set {employee_id, department_id} is a super key
+        and since they are the only two columns in the table, they identify all columns.
+
+
+
+
+3. This student_records table contains students and their grades in different subjects.
+The schema is already in first normal form (1NF). Convert this schema to the third
+normal form (3NF) using the techniques you learned in this checkpoint.
+
+  ANSWER HERE
+
+    CREATE TABLE student (
+      "id"             INTEGER PRIMARY KEY,
+      "student_email"  VARCHAR(24),
+      "student_name"   VARCHAR(9)
+    );
+
+    CREATE TABLE professor (
+      "professor_id"   INTEGER PRIMARY KEY,
+      "professor_name" VARCHAR(9),
+    );
+
+    CREATE TABLE subject (
+      "name"           VARCHAR(11) PRIMARY KEY,
+      "professor_id"   INTEGER REFERENCES professor(id),
+    );
+
+    CREATE TABLE student_records (
+      "id"            INTEGER PRIMARY KEY,
+      "student_id"    INTEGER REFERENCES student(id),
+      "subject"       VARCHAR(11) REFERENCES subject(name),
+      "grade"         VARCHAR(1)
+    );
+
+4. In your own words, explain the potential disadvantages of normalizing the data above.
+What are its trade-offs? Submit your findings in the submission table and discuss
+them with your mentor in your next session.
+
+  ANSWER HERE
+     A disadvantage of the above normalization is a decline in table readability;
+     ie SELECT statements are more tedious.
+     However, fewer columns per table increases write/read efficiency and
+     data integrity is better preserved.
+
+
+5. Looking at the tables you have normalized. If you need to denormalize to improve
+query performance or speed up reporting, how would you carry out denormalization
+for this database design? Submit potential strategies in the submission tab and
+discuss them with your mentor in your next session.
+
+  ANSWER HERE
+
+    CREATE TABLE student (
+      "id"             INTEGER PRIMARY KEY,
+      "student_email"  VARCHAR(24),
+      "student_name"   VARCHAR(9)
+    );
+    CREATE TABLE professor (
+      "professor_id"   INTEGER PRIMARY KEY,
+      "professor_name" VARCHAR(9),
+      "subject"        VARCHAR(20)
+    );
+
+    CREATE TABLE student_records (
+      "id"           INTEGER PRIMARY KEY,
+      "student_id"   INTEGER REFERENCES student(id),
+      "professor_id" VARCHAR(11) REFERENCES professor(id),
+      "grade"        VARCHAR(1)
+    );
+
+6. Explore the trade-offs between data normalization and denormalization in this
+scenario, submit your findings in the submission tab, and discuss them with your
+mentor in your next session.
+
+  ANSWER HERE
+    In this scenario, for denormalization I removed the subject table entirely,
+    instead simply adding subject as a column to the professor table.
+    This allowed me to have professor_id and student_id foreign key columns under
+    the student_records table.
+    Removing the subject table should reduce number of JOIN statements required to
+    see a student's grade in a particular subject.
+    However, there is no longer a subject primary key available which could otherwise
+    be added to the student table as a foreign key reference.
+
+end
