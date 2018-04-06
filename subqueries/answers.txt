@@ -1,0 +1,228 @@
+1. Explain a subquery in your own words.
+
+  ANSWER HERE
+
+    A Subquery allows for conditional calls against 2 or more tables.
+    They are comprised of a select statement within another select statement.
+
+2. Where can you use a subquery within a SELECT statement?
+
+  ANSWER HERE
+
+    They can be found within WHERE, SELECT, and FROM clauses.
+
+3. When would you employ a subquery?
+
+  ANSWER HERE
+
+    When you need to access information from 2 or more tables and it will improve
+    readability over JOIN statements.
+
+4. Explain a row constructor in your own words.
+
+  ANSWER HERE
+
+    Add a row to a table with given input values for columns.
+
+5. What happens if a row in the subquery result provides a NULL value to the comparison?
+
+  ANSWER HERE
+
+    The result will be NULL.
+
+6. What are the ways to use a subquery within a WHERE clause? If you can't remember
+them, do these flashcards until you can.
+
+  ANSWER HERE
+
+    IN, EXISTS, NOT EXISTS, ANY, ALL.
+
+7. Using this Employee schema and data, write queries to find the following information:
+
+  All employees with their shifts if they have any. Also include any unscheduled shifts.
+
+    ANSWER HERE
+
+      SELECT scheduled_shifts.employee_id, scheduled_shifts.shift_id, shifts.date
+      FROM scheduled_shifts, shifts
+      WHERE scheduled_shifts.shift_id = shifts.id;
+
+      SELECT *
+      FROM shifts
+      WHERE shifts.id NOT IN (SELECT scheduled_shifts.shift_id FROM scheduled_shifts);
+
+8. Using this Adoption schema and data, please write queries to retrieve the following
+information and include the results:
+
+  All volunteers. If the volunteer is fostering a dog, include each dog as well.
+
+    ANSWER HERE
+
+      SELECT DISTINCT(volunteers.id), volunteers.foster_dog_id
+      FROM volunteers, dogs
+      WHERE volunteers.foster_dog_id = dogs.id OR volunteers.foster_dog_id IS NULL
+      ORDER BY volunteers.id;
+
+  The cat's name, adopter's name, and adopted date for each cat adopted within the
+  past month to be displayed as part of the "Happy Tail" social media promotion which
+  posts recent successful adoptions.
+
+    ANSWER HERE
+
+      SELECT adopters.first_name, adopters.last_name, cats.name, cat_adoptions.date
+      FROM cat_adoptions, cats, adopters
+      WHERE cat_adoptions.cat_id = cats.id
+            AND cat_adoptions.adopter_id = adopters.id
+            AND cat_adoptions.date > CURRENT_DATE - INTERVAL '30 DAYS';
+
+  Adopters who have not yet chosen a dog to adopt and generate all possible combinations
+  of adopters and available dogs.
+
+    ANSWER HERE
+
+      SELECT adopters.id, adopters.first_name, adopters.last_name, dogs.name
+      FROM adopters, dogs
+      WHERE dogs.id NOT IN (SELECT dog_adoptions.dog_id FROM dog_adoptions)
+            AND adopters.id NOT IN (SELECT dog_adoptions.adopter_id FROM dog_adoptions)
+      ORDER BY adopters.id;
+
+  Lists of all cats and all dogs who have not been adopted.
+
+    ANSWER HERE
+
+      SELECT DISTINCT(dogs.id)
+      FROM dogs, dog_adoptions
+      WHERE dogs.id NOT IN (SELECT dog_adoptions.dog_id FROM dog_adoptions);
+
+      SELECT DISTINCT(cats.id)
+      FROM cats, cat_adoptions
+      WHERE cats.id NOT IN (SELECT cat_adoptions.cat_id FROM cat_adoptions);
+
+  Volunteers who are available to foster. If they currently are fostering a dog, include
+  the dog. Also include all dogs who are not currently in foster homes.
+
+    ANSWER HERE
+
+      SELECT volunteers.id, volunteers.first_name, volunteers.foster_dog_id, volunteers.available_to_foster
+      FROM volunteers
+      WHERE volunteers.available_to_foster = TRUE;
+
+      SELECT dogs.id, dogs.name
+      FROM dogs
+      WHERE dogs.id NOT IN (SELECT volunteers.foster_dog_id FROM volunteers WHERE volunteers.foster_dog_id IS NOT NULL);
+
+  The name of the person who adopted Rosco.
+
+    ANSWER HERE
+
+      SELECT adopters.first_name, dogs.name
+      FROM dog_adoptions, adopters, dogs
+      WHERE adopters.id = dog_adoptions.adopter_id
+            AND dogs.id = dog_adoptions.dog_id
+            AND dogs.name = 'Rosco';
+
+9. Using this Library schema and data, write queries applying the following scenarios:
+
+  To determine if the library should buy more copies of a given book, please provide
+  the names and position, in order, of all of the patrons with a hold (request
+  for a book with all copies checked out) on "Advanced Potion-Making".
+
+    ANSWER HERE
+
+      SELECT holds.patron_id, holds.rank, books.title
+      FROM holds, books
+      WHERE holds.isbn = books.isbn
+            AND books.title = 'Advanced Potion-Making'
+      ORDER BY holds.rank;
+
+  Make a list of all book titles and denote whether or not a copy of that book is
+  checked out.
+
+    ANSWER HERE
+
+      SELECT books.title, transactions.id, transactions.checked_in_date
+      FROM books, transactions
+      WHERE books.isbn = transactions.isbn
+            OR transactions.checked_in_date IS NULL
+      ORDER BY books.title;
+
+  In an effort to learn which books take longer to read, the librarians would like
+  you to create a list of total checked out time by book name in the past month.
+
+    ANSWER HERE
+
+      SELECT books.title, SUM(transactions.checked_in_date - transactions.checked_out_date)
+      FROM books, transactions
+      WHERE books.isbn IN (SELECT transactions.isbn FROM transactions)
+            AND books.isbn = transactions.isbn
+            AND transactions.checked_out_date > CURRENT_DATE - INTERVAL '30 DAYS'
+      GROUP BY books.title;
+
+  In order to learn which items should be retired, make a list of all books that
+  have not been checked out in the past 5 years.
+
+    ANSWER HERE
+
+      SELECT books.isbn, books.title
+      FROM books
+      WHERE books.isbn NOT IN (SELECT transactions.isbn FROM transactions WHERE transactions.checked_out_date > CURRENT_DATE - INTERVAL '5 YEARS');
+
+  List all of the library patrons. If they have one or more books checked out,
+  correspond the books to the patrons.
+
+    ANSWER HERE
+
+      SELECT patrons.id, patrons.name, transactions.isbn, transactions.checked_in_date
+      FROM patrons, transactions
+      WHERE transactions.patron_id = patrons.id
+      ORDER BY patrons.id;
+
+10. Using this Flight schema and data, write queries applying the following scenarios:
+
+  To determine the most profitable airplanes, find all airplane models where each
+  flight has had over 250 paying customers in the past month.
+
+    ANSWER HERE
+
+      SELECT airplanes.model, flights.flight_number, transactions.date, transactions.seats_sold
+      FROM airplanes, flights, transactions
+      WHERE airplanes.model = flights.airplane_model
+            AND flights.flight_number = transactions.flight_number
+            AND transactions.seats_sold > 250
+            AND transactions.date > CURRENT_DATE - INTERVAL '30 DAYS';
+
+  To determine the most profitable flights, find all destination-origin pairs where
+  90% or more of the seats have been sold in the past month.
+
+    ANSWER HERE
+
+      SELECT flights.flight_number, flights.origin, flights.destination, transactions.seats_sold, airplanes.seat_capacity
+      FROM flights, airplanes, transactions
+      WHERE flights.airplane_model = airplanes.model
+            AND flights.flight_number = transactions.flight_number
+            AND (transactions.seats_sold * 1.00) / (airplanes.seat_capacity * 1.00) >= 0.90;
+
+  The airline is looking to expand its presence in Asia and globally. Find the total
+  revenue of any flight (not time restricted) arriving at or departing from Singapore (SIN).
+
+    ANSWER HERE
+
+      SELECT flights.flight_number, transactions.total_revenue, flights.origin, flights.destination
+      FROM transactions, flights
+      WHERE transactions.flight_number = flights.flight_number
+      GROUP BY flights.flight_number, transactions.total_revenue
+      HAVING flights.origin = 'SIN'
+             OR flights.destination = 'SIN';
+
+11. Compare the subqueries you've written above. Compare them to the joins you wrote
+in Checkpoint 6. Which ones are more readable? Which were more logical to write?
+
+    ANSWER HERE
+
+      https://github.com/Neidley/relational-database-fundamentals/blob/checkpoint-join-statements/JOIN-statements/join-statements-answers.txt
+
+      In my opinion, any SELECT statement that pulls from 3 or more tables reads better
+      as a subquery.
+      If 2 or less tables are needed, then JOIN statements have improved readability.
+
+end
